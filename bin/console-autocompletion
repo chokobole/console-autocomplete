@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -e
+
+path_to_self="${BASH_SOURCE[0]}"
+
+if [ -L "$path_to_self" ]; then
+    console_autocompletion_dir="$(cd "$(dirname "$path_to_self")"/"$(dirname "$(readlink "$path_to_self")")/.." && pwd)"
+else
+    console_autocompletion_dir="$(cd "$(dirname "$path_to_self")/.." && pwd)"
+fi
+
+if ! command -v "node" &>/dev/null; then
+    echo "error: Node.js not installed? Executable 'node' not found"
+    exit 1
+fi
+
+if [[ ! -f "${console_autocompletion_dir}/dist/main.js" ]]; then
+    echo "error: ${console_autocompletion_dir}/dist/main.js not found. Build it with npm run build"
+    exit 1
+fi
+
+node "${console_autocompletion_dir}/dist/main.js" $@
